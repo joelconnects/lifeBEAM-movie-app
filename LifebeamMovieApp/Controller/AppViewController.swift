@@ -14,6 +14,7 @@ class AppViewController: UIViewController {
   private var containerView: UIView!
   private var actingViewController: UIViewController!
   private var backgroundImageView: UIImageView!
+  private var initialViewAppearance: Bool = true
   
   // MARK: - View lifecycle
   override func viewDidLoad() {
@@ -23,9 +24,19 @@ class AppViewController: UIViewController {
     loadInitialViewController()
   }
   
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    if initialViewAppearance {
+     initialViewAppearance = false
+      UIView.transition(with: backgroundImageView, duration: 0.3, options: .transitionCrossDissolve, animations: {
+        self.backgroundImageView.image = Theme.Images.MainBackground
+      }, completion: nil)
+    }
+  }
+  
   // MARK: View configuration
   private func configureBackgroundImageView() {
-    backgroundImageView = UIImageView(image: Theme.Images.MainBackground)
+    backgroundImageView = UIImageView(image: Theme.Images.LaunchBackground)
     backgroundImageView.contentMode = .scaleAspectFill
     view.addSubview(backgroundImageView)
     

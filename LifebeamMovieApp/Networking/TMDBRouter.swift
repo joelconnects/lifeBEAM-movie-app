@@ -16,7 +16,7 @@ struct TMDBRouter {
   private let queryKey: String = "?api_key=\(Secrets.TMDB.APIKey)"
   private let queryDefault: String = "&include_video=false&include_adult=false&language=en-US&sort_by=popularity.desc&page="
   private let method: HTTPMethod = .get
-  private var page: Int
+  private let page: Int
   
   var urlRequest: URLRequest? {
     guard let url = URL(string: baseUrl + path + queryKey + queryDefault + "\(page)") else {
