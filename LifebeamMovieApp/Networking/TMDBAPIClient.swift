@@ -8,29 +8,7 @@
 
 import Foundation
 
-struct TMDBRouter {
-  
-  // MARK: - Properties
-  private let baseUrl: String = "https://api.themoviedb.org"
-  private let path: String = "/3/discover/movie"
-  private let queryKey: String = "?api_key=\(Secrets.TMDB.APIKey)"
-  private let queryDefault: String = "&language=en-US&sort_by=popularity.desc&page="
-  private let method: HTTPMethod = .get
-  private var page: Int
-  
-  var urlRequest: URLRequest? {
-    guard let url = URL(string: baseUrl + path + queryKey + queryDefault + "\(page)") else {
-      return nil
-    }
-    let urlRequest = URLRequest(url: url)
-    return urlRequest
-  }
-  
-  // MARK: - Initialization
-  init(page: Int) {
-    self.page = page
-  }
-}
+typealias MovieResult = Result<Any> // TODO: Remove if not in use
 
 struct TMDBAPIClient {
   
@@ -51,7 +29,7 @@ struct TMDBAPIClient {
             completion(Result.failure(NetworkError.parsingError))
             return
           }
-          let result = try JSONSerialization.jsonObject(with: data, options: [])
+          let result = try JSONDecoder().decode(TMDBResultParser.self, from: data)
           completion(Result.success(result))
         } catch {
           completion(Result.failure(NetworkError.parsingError))

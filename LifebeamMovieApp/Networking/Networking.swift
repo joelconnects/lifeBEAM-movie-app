@@ -9,7 +9,6 @@
 import Foundation
 
 // MARK: - Networking types
-typealias MovieResult = Result<Any>
 typealias DataTaskResponse = (data: Data?, urlResponse: URLResponse?, error: Error?)
 typealias DataTaskParserResult = Result<Data?>
 
