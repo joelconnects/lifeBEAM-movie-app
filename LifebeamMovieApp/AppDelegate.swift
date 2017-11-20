@@ -12,25 +12,14 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
   var window: UIWindow?
-  let LOG_TAG = "AppDelegate"
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
     
-    let router = TMDBRouter(page: 1)
-    TMDBAPIClient.request(router) { result in
-      switch result {
-      case .success(let any):
-        Log.d(tag: self.LOG_TAG, message: "\(any)")
-      case .failure(let error):
-        Log.e(tag: self.LOG_TAG, message: "\(error)")
-      }
-    }
-    
-    let appController = UIViewController()
+    let appViewController = AppViewController()
     window = UIWindow(frame: UIScreen.main.bounds)
     
     if let window = window {
-      window.rootViewController = appController
+      window.rootViewController = appViewController
       window.makeKeyAndVisible()
     }
     

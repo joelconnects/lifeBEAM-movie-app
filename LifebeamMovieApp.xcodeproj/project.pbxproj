@@ -18,6 +18,9 @@
 		5DE410941FC21A49002891C7 /* TMDBRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410931FC21A49002891C7 /* TMDBRouter.swift */; };
 		5DE410961FC21A72002891C7 /* TMDBResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410951FC21A72002891C7 /* TMDBResults.swift */; };
 		5DE410981FC27F3A002891C7 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410971FC27F3A002891C7 /* Movie.swift */; };
+		5DE4109B1FC36676002891C7 /* AppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4109A1FC36676002891C7 /* AppViewController.swift */; };
+		5DE4109D1FC366C1002891C7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4109C1FC366C1002891C7 /* Constants.swift */; };
+		5DE4109F1FC372BE002891C7 /* LoaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4109E1FC372BE002891C7 /* LoaderViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +37,9 @@
 		5DE410931FC21A49002891C7 /* TMDBRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBRouter.swift; sourceTree = "<group>"; };
 		5DE410951FC21A72002891C7 /* TMDBResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBResults.swift; sourceTree = "<group>"; };
 		5DE410971FC27F3A002891C7 /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
+		5DE4109A1FC36676002891C7 /* AppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewController.swift; sourceTree = "<group>"; };
+		5DE4109C1FC366C1002891C7 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		5DE4109E1FC372BE002891C7 /* LoaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaderViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,9 +74,9 @@
 			children = (
 				5DE4106A1FC11FF6002891C7 /* AppDelegate.swift */,
 				5DE410901FC13FA1002891C7 /* Model */,
+				5DE410991FC3665B002891C7 /* Controller */,
 				5DE410851FC13722002891C7 /* Networking */,
 				5DE4108F1FC13962002891C7 /* Helpers */,
-				5DE410861FC13729002891C7 /* Secrets */,
 				5DE4107C1FC12518002891C7 /* Supporting Files */,
 			);
 			path = LifebeamMovieApp;
@@ -79,6 +85,8 @@
 		5DE4107C1FC12518002891C7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				5DE4109C1FC366C1002891C7 /* Constants.swift */,
+				5DE4108B1FC13744002891C7 /* Secrets.swift */,
 				5DE4106E1FC11FF6002891C7 /* Main.storyboard */,
 				5DE410711FC11FF6002891C7 /* Assets.xcassets */,
 				5DE410731FC11FF6002891C7 /* LaunchScreen.storyboard */,
@@ -98,14 +106,6 @@
 			path = Networking;
 			sourceTree = "<group>";
 		};
-		5DE410861FC13729002891C7 /* Secrets */ = {
-			isa = PBXGroup;
-			children = (
-				5DE4108B1FC13744002891C7 /* Secrets.swift */,
-			);
-			path = Secrets;
-			sourceTree = "<group>";
-		};
 		5DE4108F1FC13962002891C7 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -120,6 +120,15 @@
 				5DE410971FC27F3A002891C7 /* Movie.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		5DE410991FC3665B002891C7 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				5DE4109A1FC36676002891C7 /* AppViewController.swift */,
+				5DE4109E1FC372BE002891C7 /* LoaderViewController.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -196,10 +205,13 @@
 			files = (
 				5DE4108E1FC1395D002891C7 /* Logger.swift in Sources */,
 				5DE410941FC21A49002891C7 /* TMDBRouter.swift in Sources */,
+				5DE4109F1FC372BE002891C7 /* LoaderViewController.swift in Sources */,
 				5DE4106B1FC11FF6002891C7 /* AppDelegate.swift in Sources */,
 				5DE4108C1FC13744002891C7 /* Secrets.swift in Sources */,
 				5DE4108A1FC1373C002891C7 /* TMDBAPIClient.swift in Sources */,
+				5DE4109D1FC366C1002891C7 /* Constants.swift in Sources */,
 				5DE410891FC1373C002891C7 /* Networking.swift in Sources */,
+				5DE4109B1FC36676002891C7 /* AppViewController.swift in Sources */,
 				5DE410981FC27F3A002891C7 /* Movie.swift in Sources */,
 				5DE410961FC21A72002891C7 /* TMDBResults.swift in Sources */,
 			);
