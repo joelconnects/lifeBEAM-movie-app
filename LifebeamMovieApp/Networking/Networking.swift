@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Networking types
 typealias DataTaskResponse = (data: Data?, urlResponse: URLResponse?, error: Error?)
-typealias DataTaskParserResult = Result<Data?>
+typealias DataTaskParserResult = Result<Data>
 
 // MARK: - Result
 enum Result<T> {

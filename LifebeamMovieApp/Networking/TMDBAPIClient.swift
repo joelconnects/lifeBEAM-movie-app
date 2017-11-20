@@ -8,12 +8,12 @@
 
 import Foundation
 
-typealias MovieResult = Result<Any> // TODO: Remove if not in use
+typealias MovieResults = Result<[Movie]>
 
 struct TMDBAPIClient {
   
   // MARK: - Request
-  static func request(_ router: TMDBRouter, completion: @escaping (Result<Any>) -> ()) {
+  static func request(_ router: TMDBRouter, completion: @escaping (MovieResults) -> ()) {
     guard let request = router.urlRequest else {
       completion(Result.failure(NetworkError.badRequest))
       return
@@ -25,12 +25,8 @@ struct TMDBAPIClient {
       switch result {
       case .success(let data):
         do {
-          guard let data = data else {
-            completion(Result.failure(NetworkError.parsingError))
-            return
-          }
-          let result = try JSONDecoder().decode(TMDBResultParser.self, from: data)
-          completion(Result.success(result))
+          let results = try JSONDecoder().decode(TMDBResults.self, from: data)
+          completion(Result.success(results.movies))
         } catch {
           completion(Result.failure(NetworkError.parsingError))
         }

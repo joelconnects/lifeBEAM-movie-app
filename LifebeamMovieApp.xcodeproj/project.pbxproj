@@ -16,7 +16,8 @@
 		5DE4108C1FC13744002891C7 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4108B1FC13744002891C7 /* Secrets.swift */; };
 		5DE4108E1FC1395D002891C7 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4108D1FC1395D002891C7 /* Logger.swift */; };
 		5DE410941FC21A49002891C7 /* TMDBRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410931FC21A49002891C7 /* TMDBRouter.swift */; };
-		5DE410961FC21A72002891C7 /* TMDBResultParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410951FC21A72002891C7 /* TMDBResultParser.swift */; };
+		5DE410961FC21A72002891C7 /* TMDBResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410951FC21A72002891C7 /* TMDBResults.swift */; };
+		5DE410981FC27F3A002891C7 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410971FC27F3A002891C7 /* Movie.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +32,8 @@
 		5DE4108B1FC13744002891C7 /* Secrets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 		5DE4108D1FC1395D002891C7 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		5DE410931FC21A49002891C7 /* TMDBRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBRouter.swift; sourceTree = "<group>"; };
-		5DE410951FC21A72002891C7 /* TMDBResultParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBResultParser.swift; sourceTree = "<group>"; };
+		5DE410951FC21A72002891C7 /* TMDBResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBResults.swift; sourceTree = "<group>"; };
+		5DE410971FC27F3A002891C7 /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,7 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				5DE410871FC1373C002891C7 /* Networking.swift */,
-				5DE410951FC21A72002891C7 /* TMDBResultParser.swift */,
+				5DE410951FC21A72002891C7 /* TMDBResults.swift */,
 				5DE410931FC21A49002891C7 /* TMDBRouter.swift */,
 				5DE410881FC1373C002891C7 /* TMDBAPIClient.swift */,
 			);
@@ -115,6 +117,7 @@
 		5DE410901FC13FA1002891C7 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				5DE410971FC27F3A002891C7 /* Movie.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -197,7 +200,8 @@
 				5DE4108C1FC13744002891C7 /* Secrets.swift in Sources */,
 				5DE4108A1FC1373C002891C7 /* TMDBAPIClient.swift in Sources */,
 				5DE410891FC1373C002891C7 /* Networking.swift in Sources */,
-				5DE410961FC21A72002891C7 /* TMDBResultParser.swift in Sources */,
+				5DE410981FC27F3A002891C7 /* Movie.swift in Sources */,
+				5DE410961FC21A72002891C7 /* TMDBResults.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

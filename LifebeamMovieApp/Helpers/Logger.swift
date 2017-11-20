@@ -33,6 +33,6 @@ class Log {
   
   // MARK: - Helpers
   private static func log(tag: String, logLevel: String, message: String) {
-    print("POSSE: \(Date()) \(logLevel)/\(tag): \(message)")
+    print("APP: \(Date()) \(logLevel)/\(tag): \(message)")
   }
 }
