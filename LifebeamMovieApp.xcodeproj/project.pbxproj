@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D5119D41FC401C600A66D30 /* CachedMovie+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5119D21FC401C600A66D30 /* CachedMovie+CoreDataClass.swift */; };
+		5D5119D51FC401C600A66D30 /* CachedMovie+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5119D31FC401C600A66D30 /* CachedMovie+CoreDataProperties.swift */; };
+		5D5119D71FC417DA00A66D30 /* MovieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5119D61FC417DA00A66D30 /* MovieManager.swift */; };
 		5DE4106B1FC11FF6002891C7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4106A1FC11FF6002891C7 /* AppDelegate.swift */; };
 		5DE410701FC11FF6002891C7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DE4106E1FC11FF6002891C7 /* Main.storyboard */; };
 		5DE410721FC11FF6002891C7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DE410711FC11FF6002891C7 /* Assets.xcassets */; };
@@ -23,9 +26,14 @@
 		5DE4109F1FC372BE002891C7 /* LoaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4109E1FC372BE002891C7 /* LoaderViewController.swift */; };
 		5DE410A21FC37F8D002891C7 /* LoaderReelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410A11FC37F8D002891C7 /* LoaderReelView.swift */; };
 		5DE410A41FC399D2002891C7 /* MoviesCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410A31FC399D2002891C7 /* MoviesCollectionViewController.swift */; };
+		5DE410AF1FC3DE10002891C7 /* MovieCache.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410AD1FC3DE10002891C7 /* MovieCache.xcdatamodeld */; };
+		5DE410B11FC3E44E002891C7 /* MovieCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410B01FC3E44E002891C7 /* MovieCacheManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D5119D21FC401C600A66D30 /* CachedMovie+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CachedMovie+CoreDataClass.swift"; sourceTree = "<group>"; };
+		5D5119D31FC401C600A66D30 /* CachedMovie+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CachedMovie+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		5D5119D61FC417DA00A66D30 /* MovieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieManager.swift; sourceTree = "<group>"; };
 		5DE410671FC11FF6002891C7 /* LifebeamMovieApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifebeamMovieApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DE4106A1FC11FF6002891C7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5DE4106F1FC11FF6002891C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -44,6 +52,8 @@
 		5DE4109E1FC372BE002891C7 /* LoaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaderViewController.swift; sourceTree = "<group>"; };
 		5DE410A11FC37F8D002891C7 /* LoaderReelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaderReelView.swift; sourceTree = "<group>"; };
 		5DE410A31FC399D2002891C7 /* MoviesCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesCollectionViewController.swift; sourceTree = "<group>"; };
+		5DE410AE1FC3DE10002891C7 /* MovieCache.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MovieCache.xcdatamodel; sourceTree = "<group>"; };
+		5DE410B01FC3E44E002891C7 /* MovieCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCacheManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +133,8 @@
 			isa = PBXGroup;
 			children = (
 				5DE410971FC27F3A002891C7 /* Movie.swift */,
+				5D5119D61FC417DA00A66D30 /* MovieManager.swift */,
+				5DE410D21FC3ED0C002891C7 /* Cache */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -143,6 +155,17 @@
 				5DE410A11FC37F8D002891C7 /* LoaderReelView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		5DE410D21FC3ED0C002891C7 /* Cache */ = {
+			isa = PBXGroup;
+			children = (
+				5D5119D21FC401C600A66D30 /* CachedMovie+CoreDataClass.swift */,
+				5D5119D31FC401C600A66D30 /* CachedMovie+CoreDataProperties.swift */,
+				5DE410AD1FC3DE10002891C7 /* MovieCache.xcdatamodeld */,
+				5DE410B01FC3E44E002891C7 /* MovieCacheManager.swift */,
+			);
+			path = Cache;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -223,13 +246,18 @@
 				5DE410A41FC399D2002891C7 /* MoviesCollectionViewController.swift in Sources */,
 				5DE4106B1FC11FF6002891C7 /* AppDelegate.swift in Sources */,
 				5DE4108C1FC13744002891C7 /* Secrets.swift in Sources */,
+				5D5119D41FC401C600A66D30 /* CachedMovie+CoreDataClass.swift in Sources */,
 				5DE4108A1FC1373C002891C7 /* TMDBAPIClient.swift in Sources */,
 				5DE4109D1FC366C1002891C7 /* Constants.swift in Sources */,
 				5DE410891FC1373C002891C7 /* Networking.swift in Sources */,
 				5DE4109B1FC36676002891C7 /* AppViewController.swift in Sources */,
+				5DE410B11FC3E44E002891C7 /* MovieCacheManager.swift in Sources */,
 				5DE410A21FC37F8D002891C7 /* LoaderReelView.swift in Sources */,
 				5DE410981FC27F3A002891C7 /* Movie.swift in Sources */,
 				5DE410961FC21A72002891C7 /* TMDBResults.swift in Sources */,
+				5D5119D51FC401C600A66D30 /* CachedMovie+CoreDataProperties.swift in Sources */,
+				5D5119D71FC417DA00A66D30 /* MovieManager.swift in Sources */,
+				5DE410AF1FC3DE10002891C7 /* MovieCache.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,7 +402,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.CraftedByCrazy.LifebeamMovieApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -390,7 +418,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.CraftedByCrazy.LifebeamMovieApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -416,6 +444,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		5DE410AD1FC3DE10002891C7 /* MovieCache.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				5DE410AE1FC3DE10002891C7 /* MovieCache.xcdatamodel */,
+			);
+			currentVersion = 5DE410AE1FC3DE10002891C7 /* MovieCache.xcdatamodel */;
+			path = MovieCache.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 5DE4105F1FC11FF6002891C7 /* Project object */;
 }

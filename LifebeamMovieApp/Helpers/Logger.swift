@@ -28,7 +28,7 @@ class Log {
   }
   
   static func f(tag: String, message: String) {
-    Log.log(tag: tag, logLevel: "FATAL", message: message)
+    fatalError("APP: \(Date()) FATAL/\(tag): \(message)")
   }
   
   // MARK: - Helpers

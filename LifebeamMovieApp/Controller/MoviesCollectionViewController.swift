@@ -13,12 +13,12 @@ final class MoviesCollectionViewController: UICollectionViewController {
   // MARK: - Properties
   private let cellReuseID = "movieCell"
   private let flowLayout = UICollectionViewFlowLayout()
-  private var movies: [Movie]
+  private let movieManager: MovieManager
   
   // MARK: - Initialization
   
-  init(movies: [Movie]) {
-    self.movies = movies
+  init(movieManager: MovieManager) {
+    self.movieManager = movieManager
     super.init(collectionViewLayout: flowLayout)
   }
   
@@ -49,7 +49,7 @@ final class MoviesCollectionViewController: UICollectionViewController {
 // MARK: UICollectionViewDataSource
 extension MoviesCollectionViewController {
   override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    return 50
+    return movieManager.movies.count
   }
   
   override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

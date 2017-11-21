@@ -8,6 +8,19 @@
 
 import UIKit
 
+struct Constants {
+  struct DataModel {
+    static let MovieCache = "MovieCache"
+    static let Limit = 100
+  }
+  
+  struct Alert {
+    static let DefaultTitle = "Oh, the Horror!"
+    static let DefaultMessage = "An error occurred. Click to try again."
+    static let RetryFailedMessage = "This is embarrassingUnable to load movies. Check your internet connection and restart the app."
+  }
+}
+
 struct Theme {
   struct Images {
     static let LaunchBackground = UIImage(named: "launch_background")!

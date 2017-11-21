@@ -16,11 +16,19 @@ private enum NavFlow  {
 
 final class AppViewController: UIViewController {
   
+  private let LOG_TAG = "AppViewController"
+  
   // MARK: - Properties
   private var containerView: UIView!
   private var actingViewController: UIViewController!
   private var backgroundImageView: UIImageView!
   private var initialViewAppeared: Bool = true
+  
+  private lazy var movieManager: MovieManager = {
+    let cacheManager = MovieCacheManager(dataModelName: Constants.DataModel.MovieCache)
+    return MovieManager(cacheManager: cacheManager)
+  }()
+  
   private var navFlow: NavFlow = .loading {
     didSet {
       transitionViewControllers()
@@ -37,6 +45,7 @@ final class AppViewController: UIViewController {
     configureBackgroundImageView()
     configureContainerView()
     loadInitialViewController()
+    loadMovies()
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -46,11 +55,6 @@ final class AppViewController: UIViewController {
       UIView.transition(with: backgroundImageView, duration: 0.3, options: .transitionCrossDissolve, animations: {
         self.backgroundImageView.image = Theme.Images.MainBackground
       }, completion: nil)
-    }
-    
-    // TODO: Remove after testing
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-      self.navFlow = .list
     }
   }
   
@@ -83,6 +87,7 @@ final class AppViewController: UIViewController {
     actingViewController.didMove(toParentViewController: self)
   }
   
+  // MARK: - Transition
   private func transitionViewControllers() {
     let exitingViewController = actingViewController
     exitingViewController?.willMove(toParentViewController: nil)
@@ -94,24 +99,17 @@ final class AppViewController: UIViewController {
     actingViewController.view.frame = containerView.bounds
     
     actingViewController.view.translatesAutoresizingMaskIntoConstraints = false
-    let bottomConstraint = actingViewController.view.bottomAnchor.constraint(equalTo: containerView.topAnchor)
-    let topConstraint = actingViewController.view.topAnchor.constraint(equalTo: containerView.topAnchor)
+    let bottomConstraint = actingViewController.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: UIScreen.main.bounds.height)
     actingViewController.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
     actingViewController.view.widthAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
     actingViewController.view.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
     
     bottomConstraint.isActive = true
     containerView.layoutIfNeeded()
-    
-//    actingViewController.view.alpha = 0
-    
-    bottomConstraint.isActive = false
-    topConstraint.isActive = true
+    bottomConstraint.constant = 0
     
     UIView.animate(withDuration: 0.4, animations: {
       self.containerView.layoutIfNeeded()
-//      self.actingViewController.view.alpha = 1
-//      exitingViewController?.view.alpha = 0
       
     }) { completed in
       exitingViewController?.view.removeFromSuperview()
@@ -120,15 +118,57 @@ final class AppViewController: UIViewController {
     }
   }
   
-  // MARK: - Helpers
+  // MARK: - Navigation flow
   private func loadViewController() -> UIViewController {
     switch navFlow {
     case .loading:
       return LoaderViewController()
     case .list:
-      return MoviesCollectionViewController(movies: [])
+      return MoviesCollectionViewController(movieManager: movieManager)
     case .detail:
       return UIViewController()
     }
+  }
+  
+  // MARK: - Helpers
+  private func loadMovies(attempts: Int = 0) {
+    guard let loaderViewController = (self.actingViewController as? LoaderViewController) else {
+      Log.e(tag: self.LOG_TAG, message: "\(#function) should only be called when LoadingViewController is acting view controller")
+      return
+    }
+    
+    if attempts == 3 {
+      loaderViewController.pause()
+      self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.RetryFailedMessage, actionTitle: "Close App", actionCallback: {
+        Log.f(tag: self.LOG_TAG, message: "Retry reached maximum attempts and failed")
+      })
+      return
+    }
+    
+    movieManager.loadMovies { error in
+      DispatchQueue.main.async {
+        if error == nil {
+          self.navFlow = .list
+        } else {
+          loaderViewController.pause()
+          self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: error?.localizedDescription ?? Constants.Alert.DefaultMessage, actionTitle: "Try Again", actionCallback: {
+            loaderViewController.resume()
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(attempts) * 1.5, execute: { [weak self] in
+              self?.loadMovies(attempts: attempts + 1)
+            })
+          })
+        }
+      }
+    }
+  }
+  
+  // MARK: - Alerts
+  private func presentDefaultAlert(title: String, message: String, actionTitle: String, actionCallback: (()->())?) {
+    let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+    let OKAction = UIAlertAction(title: actionTitle, style: .default) { _ in
+      actionCallback?()
+    }
+    alertController.addAction(OKAction)
+    present(alertController, animated: true, completion: nil)
   }
 }

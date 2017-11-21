@@ -93,4 +93,27 @@ final class LoaderViewController: UIViewController {
     captionLabel.minimumScaleFactor = 0.8
     captionLabel.lineBreakMode = .byClipping
   }
+  
+  // MARK: - Helpers
+  func pause() {
+    reelLeftView.activityIndicator.stopAnimating()
+    reelRightView.activityIndicator.stopAnimating()
+    fadeCamera(alpha: 0)
+  }
+  
+  func resume() {
+    reelLeftView.activityIndicator.startAnimating()
+    reelRightView.activityIndicator.startAnimating()
+    fadeCamera(alpha: 1)
+  }
+  
+  private func fadeCamera(alpha: CGFloat) {
+    UIView.animate(withDuration: 0.3) {
+      self.captionLabel.alpha = alpha
+      self.reelLeftView.alpha = alpha
+      self.reelRightView.alpha = alpha
+      self.cameraBodyImageView.alpha = alpha
+      self.cameraLensImageView.alpha = alpha
+    }
+  }
 }
