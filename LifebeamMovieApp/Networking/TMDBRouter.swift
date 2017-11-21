@@ -8,18 +8,21 @@
 
 import Foundation
 
+enum TMDBRouterSection {
+  case discover(page: Int)
+  case genres
+}
+
 struct TMDBRouter {
   
   // MARK: - Properties
   private let baseUrl: String = "https://api.themoviedb.org"
-  private let path: String = "/3/discover/movie"
-  private let queryKey: String = "?api_key=\(Secrets.TMDB.APIKey)"
-  private let queryDefault: String = "&include_video=false&include_adult=false&language=en-US&sort_by=popularity.desc&page="
+  private let apiKey: String = "?api_key=\(Secrets.TMDB.APIKey)"
   private let method: HTTPMethod = .get
-  private let page: Int
+  let section: TMDBRouterSection
   
   var urlRequest: URLRequest? {
-    guard let url = URL(string: baseUrl + path + queryKey + queryDefault + "\(page)") else {
+    guard let url = URL(string: baseUrl + path() + apiKey + query()) else {
       return nil
     }
     let urlRequest = URLRequest(url: url)
@@ -27,7 +30,27 @@ struct TMDBRouter {
   }
   
   // MARK: - Initialization
-  init(page: Int) {
-    self.page = page
+  init(section: TMDBRouterSection) {
+    self.section = section
   }
+  
+  // MARK: - Helpers
+  private func path() -> String {
+    switch section {
+    case .discover:
+      return "/3/discover/movie"
+    case .genres:
+      return "/3/genre/movie/list"
+    }
+  }
+
+  private func query() -> String {
+    switch section {
+    case .discover(page: let page):
+      return "&include_video=false&include_adult=false&language=en-US&sort_by=popularity.desc&page=\(page)"
+    case .genres:
+      return "&language=en-US"
+    }
+  }
+  
 }

@@ -25,8 +25,8 @@ final class AppViewController: UIViewController {
   private var initialViewAppeared: Bool = true
   
   private lazy var movieManager: MovieManager = {
-    let cacheManager = MovieCacheManager(dataModelName: Constants.DataModel.MovieCache)
-    return MovieManager(cacheManager: cacheManager)
+    let movieDataModelManager = MovieDataModelManager(dataModelName: Constants.DataModel.Name)
+    return MovieManager(movieDataModelManager: movieDataModelManager)
   }()
   
   private var navFlow: NavFlow = .loading {
@@ -99,7 +99,7 @@ final class AppViewController: UIViewController {
     actingViewController.view.frame = containerView.bounds
     
     actingViewController.view.translatesAutoresizingMaskIntoConstraints = false
-    let bottomConstraint = actingViewController.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: UIScreen.main.bounds.height)
+    let bottomConstraint = actingViewController.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -UIScreen.main.bounds.height)
     actingViewController.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
     actingViewController.view.widthAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
     actingViewController.view.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
@@ -124,7 +124,9 @@ final class AppViewController: UIViewController {
     case .loading:
       return LoaderViewController()
     case .list:
-      return MoviesCollectionViewController(movieManager: movieManager)
+      let collectionViewController = MoviesCollectionViewController(movieManager: movieManager)
+      let navigationController = UINavigationController(rootViewController: collectionViewController)
+      return navigationController
     case .detail:
       return UIViewController()
     }
@@ -139,25 +141,23 @@ final class AppViewController: UIViewController {
     
     if attempts == 3 {
       loaderViewController.pause()
-      self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.RetryFailedMessage, actionTitle: "Close App", actionCallback: {
+      self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.RetryFailedMessage, actionTitle: Constants.Alert.RetryFailedActionTitle, actionCallback: {
         Log.f(tag: self.LOG_TAG, message: "Retry reached maximum attempts and failed")
       })
       return
     }
     
-    movieManager.loadMovies { error in
-      DispatchQueue.main.async {
-        if error == nil {
-          self.navFlow = .list
-        } else {
+    movieManager.loadMovies { success in
+      if success {
+        self.navFlow = .list
+      } else {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(attempts) * 1.5, execute: {
           loaderViewController.pause()
-          self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: error?.localizedDescription ?? Constants.Alert.DefaultMessage, actionTitle: "Try Again", actionCallback: {
+          self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.DefaultMessage, actionTitle: Constants.Alert.DefaultActionTitle, actionCallback: {
             loaderViewController.resume()
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(attempts) * 1.5, execute: { [weak self] in
-              self?.loadMovies(attempts: attempts + 1)
-            })
+            self.loadMovies(attempts: attempts + 1)
           })
-        }
+        })
       }
     }
   }
@@ -169,6 +169,6 @@ final class AppViewController: UIViewController {
       actionCallback?()
     }
     alertController.addAction(OKAction)
-    present(alertController, animated: true, completion: nil)
+    self.present(alertController, animated: true, completion: nil)
   }
 }

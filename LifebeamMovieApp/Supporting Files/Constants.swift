@@ -10,14 +10,16 @@ import UIKit
 
 struct Constants {
   struct DataModel {
-    static let MovieCache = "MovieCache"
+    static let Name = "MovieDataModel"
     static let Limit = 100
   }
   
   struct Alert {
-    static let DefaultTitle = "Oh, the Horror!"
-    static let DefaultMessage = "An error occurred. Click to try again."
-    static let RetryFailedMessage = "This is embarrassingUnable to load movies. Check your internet connection and restart the app."
+    static let DefaultTitle = "Oh, the horror!"
+    static let DefaultMessage = "Check your internet connection and try again."
+    static let DefaultActionTitle = "Try again".uppercased()
+    static let RetryFailedMessage = "These movies just don't want to load. Check your internet connection and restart the app."
+    static let RetryFailedActionTitle = "Close app".uppercased()
   }
 }
 

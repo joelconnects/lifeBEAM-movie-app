@@ -8,7 +8,10 @@
 
 import Foundation
 
-struct TMDBResults: Decodable {
+typealias TMDBSections = (discover: TMDBDiscover?, genres: TMDBGenres?)
+typealias TMDBSectionResults = Result<TMDBSections>
+
+struct TMDBDiscover: Decodable {
   
   // MARK: - Properties
   let page: Int
@@ -23,4 +26,10 @@ struct TMDBResults: Decodable {
     case totalPages = "total_pages"
     case movies = "results"
   }
+}
+
+struct TMDBGenres: Decodable {
+
+  // MARK: - Properties
+  let genres: [Genre]
 }

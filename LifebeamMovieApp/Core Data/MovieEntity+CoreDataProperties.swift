@@ -1,5 +1,5 @@
 //
-//  CachedMovie+CoreDataProperties.swift
+//  MovieEntity+CoreDataProperties.swift
 //  LifebeamMovieApp
 //
 //  Created by Joel Bell on 11/21/17.
@@ -11,10 +11,10 @@ import Foundation
 import CoreData
 
 
-extension CachedMovie {
+extension MovieEntity {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<CachedMovie> {
-        return NSFetchRequest<CachedMovie>(entityName: "CachedMovie")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<MovieEntity> {
+        return NSFetchRequest<MovieEntity>(entityName: "MovieEntity")
     }
 
     @NSManaged public var adult: NSNumber?
@@ -31,5 +31,4 @@ extension CachedMovie {
     @NSManaged public var video: NSNumber?
     @NSManaged public var voteAverage: NSNumber?
     @NSManaged public var voteCount: NSNumber?
-
 }
