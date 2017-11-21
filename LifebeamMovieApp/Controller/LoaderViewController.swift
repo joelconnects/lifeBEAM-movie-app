@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LoaderViewController: UIViewController {
+final class LoaderViewController: UIViewController {
   
   // MARK: - Properties
   private var effectView: UIVisualEffectView!

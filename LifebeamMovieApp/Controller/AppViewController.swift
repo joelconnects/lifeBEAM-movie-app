@@ -8,13 +8,28 @@
 
 import UIKit
 
-class AppViewController: UIViewController {
+private enum NavFlow  {
+  case loading
+  case list
+  case detail
+}
+
+final class AppViewController: UIViewController {
   
   // MARK: - Properties
   private var containerView: UIView!
   private var actingViewController: UIViewController!
   private var backgroundImageView: UIImageView!
-  private var initialViewAppearance: Bool = true
+  private var initialViewAppeared: Bool = true
+  private var navFlow: NavFlow = .loading {
+    didSet {
+      transitionViewControllers()
+    }
+  }
+  
+  override var preferredStatusBarStyle: UIStatusBarStyle {
+    return .lightContent
+  }
   
   // MARK: - View lifecycle
   override func viewDidLoad() {
@@ -26,11 +41,16 @@ class AppViewController: UIViewController {
   
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    if initialViewAppearance {
-     initialViewAppearance = false
+    if initialViewAppeared {
+     initialViewAppeared = false
       UIView.transition(with: backgroundImageView, duration: 0.3, options: .transitionCrossDissolve, animations: {
         self.backgroundImageView.image = Theme.Images.MainBackground
       }, completion: nil)
+    }
+    
+    // TODO: Remove after testing
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+      self.navFlow = .list
     }
   }
   
@@ -55,7 +75,7 @@ class AppViewController: UIViewController {
   }
   
   private func loadInitialViewController() {
-    actingViewController = LoaderViewController()
+    actingViewController = loadViewController()
     self.addChildViewController(actingViewController)
     containerView.addSubview(actingViewController.view)
     actingViewController.view.frame = containerView.bounds
@@ -63,39 +83,52 @@ class AppViewController: UIViewController {
     actingViewController.didMove(toParentViewController: self)
   }
   
-  private func switchTo(_ viewController: UIViewController) {
+  private func transitionViewControllers() {
     let exitingViewController = actingViewController
     exitingViewController?.willMove(toParentViewController: nil)
     
-    actingViewController = viewController
+    actingViewController = loadViewController()
     self.addChildViewController(actingViewController)
     
     containerView.addSubview(actingViewController.view)
     actingViewController.view.frame = containerView.bounds
     
     actingViewController.view.translatesAutoresizingMaskIntoConstraints = false
-    actingViewController.view.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
-    actingViewController.view.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-    let widthConstraint = actingViewController.view.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 2)
-    let heightConstraint = actingViewController.view.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height * 2)
-    widthConstraint.isActive = true
-    heightConstraint.isActive = true
+    let bottomConstraint = actingViewController.view.bottomAnchor.constraint(equalTo: containerView.topAnchor)
+    let topConstraint = actingViewController.view.topAnchor.constraint(equalTo: containerView.topAnchor)
+    actingViewController.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+    actingViewController.view.widthAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
+    actingViewController.view.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
+    
+    bottomConstraint.isActive = true
     containerView.layoutIfNeeded()
     
-    actingViewController.view.alpha = 0
+//    actingViewController.view.alpha = 0
     
-    widthConstraint.constant = UIScreen.main.bounds.width
-    heightConstraint.constant = UIScreen.main.bounds.height
+    bottomConstraint.isActive = false
+    topConstraint.isActive = true
     
     UIView.animate(withDuration: 0.4, animations: {
       self.containerView.layoutIfNeeded()
-      self.actingViewController.view.alpha = 1
-      exitingViewController?.view.alpha = 0
+//      self.actingViewController.view.alpha = 1
+//      exitingViewController?.view.alpha = 0
       
     }) { completed in
       exitingViewController?.view.removeFromSuperview()
       exitingViewController?.removeFromParentViewController()
       self.actingViewController.didMove(toParentViewController: self)
+    }
+  }
+  
+  // MARK: - Helpers
+  private func loadViewController() -> UIViewController {
+    switch navFlow {
+    case .loading:
+      return LoaderViewController()
+    case .list:
+      return MoviesCollectionViewController(movies: [])
+    case .detail:
+      return UIViewController()
     }
   }
 }

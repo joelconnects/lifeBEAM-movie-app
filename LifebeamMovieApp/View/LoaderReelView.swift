@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LoaderReelView: UIView {
+final class LoaderReelView: UIView {
   
   // MARK: - Properties
   private let fixedFrame = CGRect(x: 0, y: 0, width: 60, height: 60)
@@ -16,7 +16,7 @@ class LoaderReelView: UIView {
   
   // MARK: - Initialization
   override init(frame: CGRect) {
-    super.init(frame: self.fixedFrame)
+    super.init(frame: fixedFrame)
     configureView()
   }
   

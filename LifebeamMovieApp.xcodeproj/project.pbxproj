@@ -22,6 +22,7 @@
 		5DE4109D1FC366C1002891C7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4109C1FC366C1002891C7 /* Constants.swift */; };
 		5DE4109F1FC372BE002891C7 /* LoaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4109E1FC372BE002891C7 /* LoaderViewController.swift */; };
 		5DE410A21FC37F8D002891C7 /* LoaderReelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410A11FC37F8D002891C7 /* LoaderReelView.swift */; };
+		5DE410A41FC399D2002891C7 /* MoviesCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE410A31FC399D2002891C7 /* MoviesCollectionViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		5DE4109C1FC366C1002891C7 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		5DE4109E1FC372BE002891C7 /* LoaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaderViewController.swift; sourceTree = "<group>"; };
 		5DE410A11FC37F8D002891C7 /* LoaderReelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaderReelView.swift; sourceTree = "<group>"; };
+		5DE410A31FC399D2002891C7 /* MoviesCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesCollectionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 			children = (
 				5DE4109A1FC36676002891C7 /* AppViewController.swift */,
 				5DE4109E1FC372BE002891C7 /* LoaderViewController.swift */,
+				5DE410A31FC399D2002891C7 /* MoviesCollectionViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -217,6 +220,7 @@
 				5DE4108E1FC1395D002891C7 /* Logger.swift in Sources */,
 				5DE410941FC21A49002891C7 /* TMDBRouter.swift in Sources */,
 				5DE4109F1FC372BE002891C7 /* LoaderViewController.swift in Sources */,
+				5DE410A41FC399D2002891C7 /* MoviesCollectionViewController.swift in Sources */,
 				5DE4106B1FC11FF6002891C7 /* AppDelegate.swift in Sources */,
 				5DE4108C1FC13744002891C7 /* Secrets.swift in Sources */,
 				5DE4108A1FC1373C002891C7 /* TMDBAPIClient.swift in Sources */,

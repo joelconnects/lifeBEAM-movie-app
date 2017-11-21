@@ -8,7 +8,7 @@
 
 import Foundation
 
-typealias MovieResults = Result<[Movie]>
+typealias MovieResults = Result<TMDBResults>
 
 struct TMDBAPIClient {
   
@@ -26,7 +26,7 @@ struct TMDBAPIClient {
       case .success(let data):
         do {
           let results = try JSONDecoder().decode(TMDBResults.self, from: data)
-          completion(Result.success(results.movies))
+          completion(Result.success(results))
         } catch {
           completion(Result.failure(NetworkError.parsingError))
         }
