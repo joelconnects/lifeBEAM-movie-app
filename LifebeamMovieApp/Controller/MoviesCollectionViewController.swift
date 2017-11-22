@@ -109,15 +109,15 @@ extension MoviesCollectionViewController {
       return
     }
     
-    let renderer = UIGraphicsImageRenderer(size: cell.bounds.size)
-    let image = renderer.image { ctx in
-      cell.drawHierarchy(in: cell.bounds, afterScreenUpdates: true)
-    }
+//    let renderer = UIGraphicsImageRenderer(size: cell.bounds.size)
+//    let image = renderer.image { ctx in
+//      cell.drawHierarchy(in: cell.bounds, afterScreenUpdates: true)
+//    }
     
-    let imageView = UIImageView(image: image)
-    imageView.frame = cell.convert(cell.frame, to: view)
+//    let imageView = UIImageView(image: image)
+    let frame = collectionView.convert(cell.frame, to: collectionView.superview)
     
-    let detailViewController = MovieDetailViewController(movie: movieManager.movies[indexPath.row], movieManager: movieManager, openingImageView: imageView)
+    let detailViewController = MovieDetailViewController(movie: movieManager.movies[indexPath.row], movieManager: movieManager, startingFrame: frame)
     detailViewController.modalPresentationStyle = .overCurrentContext
     present(detailViewController, animated: false, completion: nil)
   }

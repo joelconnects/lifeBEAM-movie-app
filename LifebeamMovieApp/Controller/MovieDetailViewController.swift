@@ -15,7 +15,8 @@ class MovieDetailViewController: UIViewController {
   // MARK: - Properties
   private let movieManager: MovieManager
   private let movie: Movie
-  private let openingImageView: UIImageView
+  private let startingFrame: CGRect
+  
   private let contentView = UIView()
   private let headerView = UIView()
   
@@ -28,10 +29,10 @@ class MovieDetailViewController: UIViewController {
   private var detailScrollView: UIScrollView!
   
   // MARK: - Initialization
-  init(movie: Movie, movieManager: MovieManager, openingImageView: UIImageView) {
+  init(movie: Movie, movieManager: MovieManager, startingFrame: CGRect) {
     self.movieManager = movieManager
     self.movie = movie
-    self.openingImageView = openingImageView
+    self.startingFrame = startingFrame
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -54,9 +55,6 @@ class MovieDetailViewController: UIViewController {
     configureDetailLabel()
     configureViewHierarchy()
     configureLayout()
-    
-    openingImageView.alpha = 0
-    
     loadHeaderImage()
   }
   
@@ -73,7 +71,6 @@ class MovieDetailViewController: UIViewController {
   private func configureViewHierarchy() {
     view.addSubview(blurEffectView)
     view.addSubview(contentView)
-    view.addSubview(openingImageView)
     
     contentView.addSubview(headerView)
     contentView.addSubview(detailScrollView)
@@ -92,12 +89,6 @@ class MovieDetailViewController: UIViewController {
     blurEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
     blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     
-    contentView.translatesAutoresizingMaskIntoConstraints = false
-    contentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30).isActive = true
-    contentView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 30).isActive = true
-    contentView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30).isActive = true
-    contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30).isActive = true
-    
     closeButton.translatesAutoresizingMaskIntoConstraints = false
     closeButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15).isActive = true
     closeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
@@ -107,7 +98,7 @@ class MovieDetailViewController: UIViewController {
     headerView.translatesAutoresizingMaskIntoConstraints = false
     headerView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
     headerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-    headerView.widthAnchor.constraint(equalTo: contentView.widthAnchor).isActive = true
+    headerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
     headerView.heightAnchor.constraint(equalTo: contentView.widthAnchor).isActive = true
 
     detailScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -140,9 +131,25 @@ class MovieDetailViewController: UIViewController {
     detailLabel.bottomAnchor.constraint(equalTo: detailScrollView.bottomAnchor, constant: -15).isActive = true
   }
   
+  private func configureContentView() {
+    contentView.frame = startingFrame
+    contentView.alpha = 0
+    contentView.layer.cornerRadius = 20
+    contentView.clipsToBounds = true
+  }
+  
   private func configureBlurEffectView() {
     blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-    blurEffectView.alpha = 0.9
+    blurEffectView.alpha = 0
+  }
+  
+  private func configureHeaderView() {
+    headerView.backgroundColor = .white
+  }
+  
+  private func configureDetailScrollView() {
+    detailScrollView = UIScrollView()
+    detailScrollView.backgroundColor = .black
   }
   
   private func configureCloseButton() {
@@ -157,10 +164,6 @@ class MovieDetailViewController: UIViewController {
     closeButton.layer.shadowRadius = 8
   }
 
-  private func configureHeaderView() {
-    headerView.backgroundColor = .white
-  }
-  
   private func configureGradientImageView() {
     gradientImageView = UIImageView(image: Theme.Images.PosterGradient)
     gradientImageView.alpha = 0.7
@@ -169,17 +172,6 @@ class MovieDetailViewController: UIViewController {
   private func configureHeaderImageView() {
     headerImageView = UIImageView()
     headerImageView.image = Theme.Images.DetailPosterPlaceholder
-  }
-  
-  private func configureContentView() {
-    contentView.alpha = 1
-    contentView.layer.cornerRadius = 20
-    contentView.clipsToBounds = true
-  }
-  
-  private func configureDetailScrollView() {
-    detailScrollView = UIScrollView()
-    detailScrollView.backgroundColor = .black
   }
   
   private func configureTitleLabel() {
@@ -217,8 +209,16 @@ class MovieDetailViewController: UIViewController {
   
   // MARK: - Animation
   private func startOpeningAnimation() {
+    contentView.translatesAutoresizingMaskIntoConstraints = false
+    contentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30).isActive = true
+    contentView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 30).isActive = true
+    contentView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30).isActive = true
+    contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30).isActive = true
+    
     UIView.animate(withDuration: 0.3) {
-      self.openingImageView.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+      self.view.layoutIfNeeded()
+      self.blurEffectView.alpha = 1
+      self.contentView.alpha = 1
     }
   }
   
