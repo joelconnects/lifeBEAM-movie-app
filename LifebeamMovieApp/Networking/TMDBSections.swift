@@ -8,7 +8,7 @@
 
 import Foundation
 
-typealias TMDBSections = (discover: TMDBDiscover?, genres: TMDBGenres?)
+typealias TMDBSections = (discover: TMDBDiscover?, genres: TMDBGenres?, images: Data?)
 typealias TMDBSectionResults = Result<TMDBSections>
 
 struct TMDBDiscover: Decodable {

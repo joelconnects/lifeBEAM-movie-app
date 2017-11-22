@@ -6,7 +6,7 @@
 //  Copyright © 2017 CraftedByCrazy. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 class MovieManager {
  
@@ -16,6 +16,7 @@ class MovieManager {
   private var movieDataModelManager: MovieDataModelManager
   lazy var movies: [Movie] = []
   lazy var genres: [Int: String] = [:]
+  lazy var images: [Int: UIImage] = [:]
 
   // MARK: - Initialization
   init(movieDataModelManager: MovieDataModelManager) {
@@ -41,7 +42,7 @@ class MovieManager {
         self.genres = GenreEntity.convert(self.movieDataModelManager.fetchGenres())
         completion(true)
       } else {
-        Log.d(tag: self.LOG_TAG, message: "load TMDB sections failed")
+        Log.e(tag: self.LOG_TAG, message: "load TMDB sections failed")
         completion(false)
       }
     }
@@ -128,7 +129,7 @@ class MovieManager {
   }
   
   // MARK: - Helpers
-  func generateGenresForDisplay(_ genreIds: [Int]?) -> String? {
+  func genresForDisplay(_ genreIds: [Int]?) -> String? {
     guard let identifiers = genreIds else {
       return nil
     }
@@ -144,5 +145,24 @@ class MovieManager {
     }
     names.sort { $0 < $1 }
     return names.joined(separator: ", ")
+  }
+  
+  func imageForDisplay(movie: Movie, completion: @escaping (UIImage?, Error?) -> ()) {
+    let router = TMDBRouter(section: .images(path: movie.posterPath))
+    TMDBAPIClient.request(router) { results in
+      switch results {
+      case .success(let result):
+        if let imageData = result.images {
+          let imageFromData = UIImage(data: imageData)
+          let croppedImage = imageFromData?.cropPoster()
+          self.images[movie.id] = croppedImage
+          completion(croppedImage, nil)
+        } else {
+          completion(nil, NetworkError.parsingError)
+        }
+      case .failure(let error):
+        completion(nil, error)
+      }
+    }
   }
 }

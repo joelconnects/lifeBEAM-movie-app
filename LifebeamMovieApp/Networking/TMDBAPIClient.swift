@@ -26,10 +26,12 @@ struct TMDBAPIClient {
           switch router.section {
           case .discover:
             let discover = try JSONDecoder().decode(TMDBDiscover.self, from: data)
-            completion(Result.success((discover, nil)))
+            completion(Result.success((discover, nil, nil)))
           case .genres:
             let genres = try JSONDecoder().decode(TMDBGenres.self, from: data)
-            completion(Result.success((nil, genres)))
+            completion(Result.success((nil, genres, nil)))
+          case .images:
+            completion(Result.success((nil, nil, data)))
           }
         } catch {
           completion(Result.failure(NetworkError.parsingError))

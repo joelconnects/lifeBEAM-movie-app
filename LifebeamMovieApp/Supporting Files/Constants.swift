@@ -27,6 +27,8 @@ struct Theme {
   struct Images {
     static let LaunchBackground = UIImage(named: "launch_background")!
     static let MainBackground = UIImage(named: "main_background")!
+    static let PosterPlaceholder = UIImage(named: "poster_placeholder")!
+    static let PosterGradient = UIImage(named: "poster_gradient")!
   }
   
   struct Icons {
@@ -34,4 +36,8 @@ struct Theme {
     static let LoaderCameraBody = UIImage(named: "loader_camera_body")!
     static let LoaderCameraLens = UIImage(named: "loader_camera_lens")!
   }
+}
+
+extension Notification.Name {
+  static let alertControllerWillDisappearName = Notification.Name("alertControllerWillDisappearName")
 }

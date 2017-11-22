@@ -8,7 +8,11 @@
 
 import UIKit
 
+
+
 final class MoviesCollectionViewController: UICollectionViewController {
+  
+  private let LOG_TAG = "MoviesCollectionViewController"
   
   // MARK: - Properties
   private let cellReuseID = "movieCell"
@@ -66,7 +70,6 @@ extension MoviesCollectionViewController {
   
   override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseID, for: indexPath) as! MoviesCollectionViewCell
-    cell.prepareForReuse()
     return cell
   }
 }
@@ -74,10 +77,30 @@ extension MoviesCollectionViewController {
 // MARK: UICollectionViewDelegate
 extension MoviesCollectionViewController {
   override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    // MARK: - Cell
     let movieCell = cell as! MoviesCollectionViewCell
-    movieCell.backgroundColor = .magenta
     let movie = movieManager.movies[indexPath.row]
+    
+    // MARK: - Labels
     movieCell.titleText = movie.title
-    movieCell.detailText = movieManager.generateGenresForDisplay(movie.genreIds)
+    movieCell.detailText = movieManager.genresForDisplay(movie.genreIds)
+    
+    // MARK: - Image
+    if let poster = movieManager.images[movie.id] {
+      movieCell.setImage(poster, animated: false, isPlaceholder: false)
+    } else {
+      movieCell.setImage(Theme.Images.PosterPlaceholder, animated: false, isPlaceholder: true)
+      movieManager.imageForDisplay(movie: movie) { (image, error) in
+        if let image = image  {
+          DispatchQueue.main.async {
+            if collectionView.visibleCells.contains(cell) {
+              movieCell.setImage(image, animated: true, isPlaceholder: false)
+            }
+          }
+        } else {
+          Log.e(tag: self.LOG_TAG, message: "\(error?.localizedDescription ?? "error retreiving image for display")")
+        }
+      }
+    }
   }
 }

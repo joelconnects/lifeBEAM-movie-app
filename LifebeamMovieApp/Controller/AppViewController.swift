@@ -141,9 +141,14 @@ final class AppViewController: UIViewController {
     
     if attempts == 3 {
       loaderViewController.pause()
-      self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.RetryFailedMessage, actionTitle: Constants.Alert.RetryFailedActionTitle, actionCallback: {
+//      self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.RetryFailedMessage, actionTitle: Constants.Alert.RetryFailedActionTitle, actionCallback: {
+//        Log.f(tag: self.LOG_TAG, message: "Retry reached maximum attempts and failed")
+//      })
+      
+      AlertPresenter.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.RetryFailedMessage, actionTitle: Constants.Alert.RetryFailedActionTitle, dismissalCallback: {
         Log.f(tag: self.LOG_TAG, message: "Retry reached maximum attempts and failed")
       })
+      
       return
     }
     
@@ -153,7 +158,12 @@ final class AppViewController: UIViewController {
       } else {
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(attempts) * 1.5, execute: {
           loaderViewController.pause()
-          self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.DefaultMessage, actionTitle: Constants.Alert.DefaultActionTitle, actionCallback: {
+//          self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.DefaultMessage, actionTitle: Constants.Alert.DefaultActionTitle, actionCallback: {
+//            loaderViewController.resume()
+//            self.loadMovies(attempts: attempts + 1)
+//          })
+          
+          AlertPresenter.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.DefaultMessage, actionTitle: Constants.Alert.DefaultActionTitle, dismissalCallback: {
             loaderViewController.resume()
             self.loadMovies(attempts: attempts + 1)
           })
