@@ -22,28 +22,44 @@ class MovieManager {
   init(movieDataModelManager: MovieDataModelManager) {
     self.movieDataModelManager = movieDataModelManager
     
+    loadMovies()
     // TODO: Remove when complete
 //    movieDataModelManager.deleteAll()
 //    print("stop")
   }
 
   // MARK: - Loading
-  func loadMovies(completion: @escaping (Bool) -> ()) {
+  func loadMovies(attempts: Int = 0) {
+    if attempts == 3 {
+      DispatchQueue.main.async {
+        AlertPresenter.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.RetryFailedMessage, actionTitle: Constants.Alert.RetryFailedActionTitle, dismissalCallback: {
+          Log.f(tag: self.LOG_TAG, message: "Retry reached maximum attempts and failed")
+        })
+      }
+      return
+    }
+    
     loadTMDBSections { success in
       if success {
         Log.d(tag: self.LOG_TAG, message: "load TMDB sections success")
         self.movieDataModelManager.deleteAll()
         self.saveMovies()
         self.saveGenres()
-        completion(true)
+        NotificationCenter.default.post(name: .moviesReadyToDisplay, object: nil)
+        
       } else if !success && !self.movieDataModelManager.isEmpty {
         Log.d(tag: self.LOG_TAG, message: "load TMDB sections !success and !isEmpty")
         self.movies = MovieEntity.convert(self.movieDataModelManager.fetchMovies())
         self.genres = GenreEntity.convert(self.movieDataModelManager.fetchGenres())
-        completion(true)
+        NotificationCenter.default.post(name: .moviesReadyToDisplay, object: nil)
+        
       } else {
         Log.e(tag: self.LOG_TAG, message: "load TMDB sections failed")
-        completion(false)
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(attempts) * 1.5, execute: {
+          AlertPresenter.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.DefaultMessage, actionTitle: Constants.Alert.DefaultActionTitle, dismissalCallback: {
+            self.loadMovies(attempts: attempts + 1)
+          })
+        })
       }
     }
   }
@@ -128,7 +144,7 @@ class MovieManager {
     }
   }
   
-  // MARK: - Helpers
+  // MARK: - Display helpers
   func genresForDisplay(_ genreIds: [Int]?) -> String? {
     guard let identifiers = genreIds else {
       return nil

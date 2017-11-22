@@ -103,4 +103,10 @@ extension MoviesCollectionViewController {
       }
     }
   }
+  
+  override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    Log.d(tag: self.LOG_TAG, message: "did select item at \(indexPath)")
+    // notify the app controller I want to make the switch
+    // pass 
+  }
 }

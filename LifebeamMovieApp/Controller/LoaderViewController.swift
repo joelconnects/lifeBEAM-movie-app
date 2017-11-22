@@ -10,6 +10,8 @@ import UIKit
 
 final class LoaderViewController: UIViewController {
   
+  private let LOG_TAG = "LoaderViewController"
+  
   // MARK: - Properties
   private var effectView: UIVisualEffectView!
   private var reelStackView: UIStackView!
@@ -21,6 +23,23 @@ final class LoaderViewController: UIViewController {
   private let cameraBodyImageView = UIImageView(image: Theme.Icons.LoaderCameraBody)
   private let cameraLensImageView = UIImageView(image: Theme.Icons.LoaderCameraLens)
   
+  private let movieManager: MovieManager
+  
+  // MARK: - Initialization
+  init(movieManager: MovieManager) {
+    self.movieManager = movieManager
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init?(coder:) is not supported")
+  }
+  
+  deinit {
+    NotificationCenter.default.removeObserver(self, name: .alertPresented, object: nil)
+    NotificationCenter.default.removeObserver(self, name: .alertDismissed, object: nil)
+  }
+  
   // MARK: - View lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -29,6 +48,19 @@ final class LoaderViewController: UIViewController {
     configureCaptionLabel()
     configureViewHierarchy()
     configureLayout()
+    
+    NotificationCenter.default.addObserver(self, selector: #selector(alertNotification(_:)), name: .alertPresented, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(alertNotification(_:)), name: .alertDismissed, object: nil)
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    Log.d(tag: LOG_TAG, message: "view will appear")
+  }
+  
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    Log.d(tag: LOG_TAG, message: "view will disappear")
   }
   
   // MARK: View configuration
@@ -114,6 +146,16 @@ final class LoaderViewController: UIViewController {
       self.reelRightView.alpha = alpha
       self.cameraBodyImageView.alpha = alpha
       self.cameraLensImageView.alpha = alpha
+    }
+  }
+  
+  // MARK: - Notifications
+  @objc private func alertNotification(_ notification: Notification) {
+    if notification.name == .alertPresented {
+      pause()
+    }
+    if notification.name == .alertDismissed {
+      resume()
     }
   }
 }

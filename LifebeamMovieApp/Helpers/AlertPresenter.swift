@@ -8,14 +8,6 @@
 
 import UIKit
 
-// MARK: - UIAlertController+ViewLifeCycle
-extension UIAlertController {
-  open override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
-    NotificationCenter.default.post(name: .alertControllerWillDisappearName, object: nil)
-  }
-}
-
 // MARK: - AlertPresenter
 final class AlertPresenter: UIViewController {
   
@@ -24,10 +16,20 @@ final class AlertPresenter: UIViewController {
   // MARK: - Properties
   private var alertControllerDismissed: AlertControllerDismissed?
   
+  override var preferredStatusBarStyle: UIStatusBarStyle {
+    return .lightContent
+  }
+  
   // MARK: - View lifecycle
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    NotificationCenter.default.post(name: .alertPresented, object: nil)
+  }
+  
   override func viewDidDisappear(_ animated: Bool) {
     super.viewDidDisappear(animated)
     alertControllerDismissed?()
+    NotificationCenter.default.post(name: .alertDismissed, object: nil)
   }
   
   // MARK: - Presentation
@@ -38,19 +40,16 @@ final class AlertPresenter: UIViewController {
     
     let presenter = AlertPresenter()
     presenter.alertControllerDismissed = dismissalCallback
-    presentAlert(controller: alertController, presenter: presenter, completion: nil)
+    presentAlert(controller: alertController, presenter: presenter)
   }
   
-  private static func presentAlert(controller: UIAlertController, presenter: AlertPresenter, completion: (() -> ())?) {
+  private static func presentAlert(controller: UIAlertController, presenter: AlertPresenter) {
     let alertWindow = UIWindow(frame: UIScreen.main.bounds)
     
     alertWindow.rootViewController = presenter
     alertWindow.windowLevel = UIWindowLevelAlert;
     alertWindow.makeKeyAndVisible()
-    
-    //    presenter.crossFade()
-    presenter.present(controller, animated: true) {
-      completion?()
-    }
+  
+    presenter.present(controller, animated: true, completion: nil)
   }
 }

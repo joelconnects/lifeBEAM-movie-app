@@ -23,11 +23,7 @@ final class AppViewController: UIViewController {
   private var actingViewController: UIViewController!
   private var backgroundImageView: UIImageView!
   private var initialViewAppeared: Bool = true
-  
-  private lazy var movieManager: MovieManager = {
-    let movieDataModelManager = MovieDataModelManager(dataModelName: Constants.DataModel.Name)
-    return MovieManager(movieDataModelManager: movieDataModelManager)
-  }()
+  private let movieManager: MovieManager
   
   private var navFlow: NavFlow = .loading {
     didSet {
@@ -39,13 +35,30 @@ final class AppViewController: UIViewController {
     return .lightContent
   }
   
+  // MARK: - Initialization
+  init(movieManager: MovieManager) {
+    self.movieManager = movieManager
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init?(coder:) is not supported")
+  }
+  
+  deinit {
+    NotificationCenter.default.removeObserver(self, name: .moviesReadyToDisplay, object: nil)
+    NotificationCenter.default.removeObserver(self, name: .movieDetailRequested, object: nil)
+  }
+  
   // MARK: - View lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureBackgroundImageView()
     configureContainerView()
     loadInitialViewController()
-    loadMovies()
+    
+    NotificationCenter.default.addObserver(self, selector: #selector(navigationNotification(_:)), name: .moviesReadyToDisplay, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(navigationNotification(_:)), name: .movieDetailRequested, object: nil)
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -122,7 +135,7 @@ final class AppViewController: UIViewController {
   private func loadViewController() -> UIViewController {
     switch navFlow {
     case .loading:
-      return LoaderViewController()
+      return LoaderViewController(movieManager: movieManager)
     case .list:
       let collectionViewController = MoviesCollectionViewController(movieManager: movieManager)
       let navigationController = UINavigationController(rootViewController: collectionViewController)
@@ -131,54 +144,8 @@ final class AppViewController: UIViewController {
       return UIViewController()
     }
   }
-  
-  // MARK: - Helpers
-  private func loadMovies(attempts: Int = 0) {
-    guard let loaderViewController = (self.actingViewController as? LoaderViewController) else {
-      Log.e(tag: self.LOG_TAG, message: "\(#function) should only be called when LoadingViewController is acting view controller")
-      return
-    }
+
+  @objc private func navigationNotification(_ notification: Notification) {
     
-    if attempts == 3 {
-      loaderViewController.pause()
-//      self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.RetryFailedMessage, actionTitle: Constants.Alert.RetryFailedActionTitle, actionCallback: {
-//        Log.f(tag: self.LOG_TAG, message: "Retry reached maximum attempts and failed")
-//      })
-      
-      AlertPresenter.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.RetryFailedMessage, actionTitle: Constants.Alert.RetryFailedActionTitle, dismissalCallback: {
-        Log.f(tag: self.LOG_TAG, message: "Retry reached maximum attempts and failed")
-      })
-      
-      return
-    }
-    
-    movieManager.loadMovies { success in
-      if success {
-        self.navFlow = .list
-      } else {
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(attempts) * 1.5, execute: {
-          loaderViewController.pause()
-//          self.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.DefaultMessage, actionTitle: Constants.Alert.DefaultActionTitle, actionCallback: {
-//            loaderViewController.resume()
-//            self.loadMovies(attempts: attempts + 1)
-//          })
-          
-          AlertPresenter.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.DefaultMessage, actionTitle: Constants.Alert.DefaultActionTitle, dismissalCallback: {
-            loaderViewController.resume()
-            self.loadMovies(attempts: attempts + 1)
-          })
-        })
-      }
-    }
-  }
-  
-  // MARK: - Alerts
-  private func presentDefaultAlert(title: String, message: String, actionTitle: String, actionCallback: (()->())?) {
-    let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-    let OKAction = UIAlertAction(title: actionTitle, style: .default) { _ in
-      actionCallback?()
-    }
-    alertController.addAction(OKAction)
-    self.present(alertController, animated: true, completion: nil)
   }
 }

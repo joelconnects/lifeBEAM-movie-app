@@ -39,5 +39,8 @@ struct Theme {
 }
 
 extension Notification.Name {
-  static let alertControllerWillDisappearName = Notification.Name("alertControllerWillDisappearName")
+  static let moviesReadyToDisplay = Notification.Name("moviesReadyToDisplay")
+  static let movieDetailRequested = Notification.Name("movieDetailRequested")
+  static let alertPresented = Notification.Name("alertPresented")
+  static let alertDismissed = Notification.Name("alertDismissed")
 }
