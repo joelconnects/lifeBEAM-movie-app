@@ -29,12 +29,13 @@ struct Theme {
     static let MainBackground = UIImage(named: "main_background")!
     static let PosterPlaceholder = UIImage(named: "poster_placeholder")!
     static let PosterGradient = UIImage(named: "poster_gradient")!
-  }
-  
-  struct Icons {
+    static let DetailPosterPlaceholder = UIImage(named: "detail_poster_placeholder")!
     static let LoaderCameraReel = UIImage(named: "loader_camera_reel")!
     static let LoaderCameraBody = UIImage(named: "loader_camera_body")!
     static let LoaderCameraLens = UIImage(named: "loader_camera_lens")!
+  }
+  struct Icons {
+    static let CloseButton = UIImage(named: "close_button")!
   }
 }
 

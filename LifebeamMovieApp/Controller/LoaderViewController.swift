@@ -20,21 +20,10 @@ final class LoaderViewController: UIViewController {
   
   private let reelLeftView = LoaderReelView()
   private let reelRightView = LoaderReelView()
-  private let cameraBodyImageView = UIImageView(image: Theme.Icons.LoaderCameraBody)
-  private let cameraLensImageView = UIImageView(image: Theme.Icons.LoaderCameraLens)
-  
-  private let movieManager: MovieManager
+  private let cameraBodyImageView = UIImageView(image: Theme.Images.LoaderCameraBody)
+  private let cameraLensImageView = UIImageView(image: Theme.Images.LoaderCameraLens)
   
   // MARK: - Initialization
-  init(movieManager: MovieManager) {
-    self.movieManager = movieManager
-    super.init(nibName: nil, bundle: nil)
-  }
-  
-  required init?(coder aDecoder: NSCoder) {
-    fatalError("init?(coder:) is not supported")
-  }
-  
   deinit {
     NotificationCenter.default.removeObserver(self, name: .alertPresented, object: nil)
     NotificationCenter.default.removeObserver(self, name: .alertDismissed, object: nil)
@@ -151,11 +140,13 @@ final class LoaderViewController: UIViewController {
   
   // MARK: - Notifications
   @objc private func alertNotification(_ notification: Notification) {
-    if notification.name == .alertPresented {
+    switch notification.name {
+    case .alertPresented:
       pause()
-    }
-    if notification.name == .alertDismissed {
+    case .alertDismissed:
       resume()
+    default:
+      break
     }
   }
 }

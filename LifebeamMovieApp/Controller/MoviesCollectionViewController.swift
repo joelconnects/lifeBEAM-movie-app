@@ -105,8 +105,20 @@ extension MoviesCollectionViewController {
   }
   
   override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    Log.d(tag: self.LOG_TAG, message: "did select item at \(indexPath)")
-    // notify the app controller I want to make the switch
-    // pass 
+    guard let cell = collectionView.cellForItem(at: indexPath) else {
+      return
+    }
+    
+    let renderer = UIGraphicsImageRenderer(size: cell.bounds.size)
+    let image = renderer.image { ctx in
+      cell.drawHierarchy(in: cell.bounds, afterScreenUpdates: true)
+    }
+    
+    let imageView = UIImageView(image: image)
+    imageView.frame = cell.convert(cell.frame, to: view)
+    
+    let detailViewController = MovieDetailViewController(movie: movieManager.movies[indexPath.row], movieManager: movieManager, openingImageView: imageView)
+    detailViewController.modalPresentationStyle = .overCurrentContext
+    present(detailViewController, animated: false, completion: nil)
   }
 }

@@ -150,7 +150,7 @@ final class MoviesCollectionViewCell: UICollectionViewCell {
       animatePosterContainerViews(with: image)
     } else {
       if !isPlaceholder {
-        gradientImageView.alpha = 1
+        gradientImageView.alpha = 0.9
       }
       mainImageView.image = image
     }
@@ -164,7 +164,7 @@ final class MoviesCollectionViewCell: UICollectionViewCell {
     }, completion: nil)
     
     UIView.animate(withDuration: duration) {
-      self.gradientImageView.alpha = 1
+      self.gradientImageView.alpha = 0.9
     }
   }
 }

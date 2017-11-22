@@ -11,7 +11,7 @@ import UIKit
 private enum NavFlow  {
   case loading
   case list
-  case detail
+  case detail(movieID: Int)
 }
 
 final class AppViewController: UIViewController {
@@ -135,7 +135,7 @@ final class AppViewController: UIViewController {
   private func loadViewController() -> UIViewController {
     switch navFlow {
     case .loading:
-      return LoaderViewController(movieManager: movieManager)
+      return LoaderViewController()
     case .list:
       let collectionViewController = MoviesCollectionViewController(movieManager: movieManager)
       let navigationController = UINavigationController(rootViewController: collectionViewController)
@@ -146,6 +146,14 @@ final class AppViewController: UIViewController {
   }
 
   @objc private func navigationNotification(_ notification: Notification) {
-    
+    switch notification.name {
+    case .moviesReadyToDisplay:
+      navFlow = .list
+    case .movieDetailRequested:
+//      let id = notification.obj
+      navFlow = .detail(movieID: 0)
+    default:
+      break
+    }
   }
 }

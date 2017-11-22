@@ -26,7 +26,7 @@ final class LoaderReelView: UIView {
   
   // MARK: - View configuration
   private func configureView() {
-    let reelImageView = UIImageView(image: Theme.Icons.LoaderCameraReel)
+    let reelImageView = UIImageView(image: Theme.Images.LoaderCameraReel)
     addSubview(reelImageView)
     reelImageView.translatesAutoresizingMaskIntoConstraints = false
     reelImageView.topAnchor.constraint(equalTo: topAnchor).isActive = true

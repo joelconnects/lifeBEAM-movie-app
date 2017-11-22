@@ -23,7 +23,7 @@ extension MovieEntity {
     @NSManaged public var id: NSNumber
     @NSManaged public var originalLanguage: String?
     @NSManaged public var originalTitle: String?
-    @NSManaged public var overview: String?
+    @NSManaged public var overview: String
     @NSManaged public var popularity: NSNumber?
     @NSManaged public var posterPath: String
     @NSManaged public var releaseDate: String?
