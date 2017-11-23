@@ -18,8 +18,13 @@ struct Constants {
     static let DefaultTitle = "Oh, the horror!"
     static let DefaultMessage = "Check your internet connection and try again."
     static let DefaultActionTitle = "Try again".uppercased()
+    static let NextPageActionTitle = "Ok".uppercased()
     static let RetryFailedMessage = "These movies just don't want to load. Check your internet connection and restart the app."
     static let RetryFailedActionTitle = "Close app".uppercased()
+  }
+  
+  struct User {
+    static let CurrentPage = "currentPage"
   }
 }
 
@@ -41,7 +46,6 @@ struct Theme {
 
 extension Notification.Name {
   static let moviesReadyToDisplay = Notification.Name("moviesReadyToDisplay")
-  static let movieDetailRequested = Notification.Name("movieDetailRequested")
   static let alertPresented = Notification.Name("alertPresented")
   static let alertDismissed = Notification.Name("alertDismissed")
 }

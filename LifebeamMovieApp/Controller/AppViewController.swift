@@ -9,9 +9,8 @@
 import UIKit
 
 private enum NavFlow  {
-  case loading
-  case list
-  case detail(movieID: Int)
+  case showLoader
+  case showMovies
 }
 
 final class AppViewController: UIViewController {
@@ -25,7 +24,7 @@ final class AppViewController: UIViewController {
   private var initialViewAppeared: Bool = true
   private let movieManager: MovieManager
   
-  private var navFlow: NavFlow = .loading {
+  private var navFlow: NavFlow = .showLoader {
     didSet {
       transitionViewControllers()
     }
@@ -47,7 +46,6 @@ final class AppViewController: UIViewController {
   
   deinit {
     NotificationCenter.default.removeObserver(self, name: .moviesReadyToDisplay, object: nil)
-    NotificationCenter.default.removeObserver(self, name: .movieDetailRequested, object: nil)
   }
   
   // MARK: - View lifecycle
@@ -57,8 +55,7 @@ final class AppViewController: UIViewController {
     configureContainerView()
     loadInitialViewController()
     
-    NotificationCenter.default.addObserver(self, selector: #selector(navigationNotification(_:)), name: .moviesReadyToDisplay, object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(navigationNotification(_:)), name: .movieDetailRequested, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(movieManagerNotification(_:)), name: .moviesReadyToDisplay, object: nil)
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -134,26 +131,18 @@ final class AppViewController: UIViewController {
   // MARK: - Navigation flow
   private func loadViewController() -> UIViewController {
     switch navFlow {
-    case .loading:
+    case .showLoader:
       return LoaderViewController()
-    case .list:
+    case .showMovies:
       let collectionViewController = MoviesCollectionViewController(movieManager: movieManager)
       let navigationController = UINavigationController(rootViewController: collectionViewController)
       return navigationController
-    case .detail:
-      return UIViewController()
     }
   }
 
-  @objc private func navigationNotification(_ notification: Notification) {
-    switch notification.name {
-    case .moviesReadyToDisplay:
-      navFlow = .list
-    case .movieDetailRequested:
-//      let id = notification.obj
-      navFlow = .detail(movieID: 0)
-    default:
-      break
+  @objc private func movieManagerNotification(_ notification: Notification) {
+    if notification.name == .moviesReadyToDisplay && navFlow != .showMovies {
+      navFlow = .showMovies
     }
   }
 }

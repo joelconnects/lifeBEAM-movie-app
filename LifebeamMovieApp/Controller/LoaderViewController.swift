@@ -42,16 +42,6 @@ final class LoaderViewController: UIViewController {
     NotificationCenter.default.addObserver(self, selector: #selector(alertNotification(_:)), name: .alertDismissed, object: nil)
   }
   
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    Log.d(tag: LOG_TAG, message: "view will appear")
-  }
-  
-  override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
-    Log.d(tag: LOG_TAG, message: "view will disappear")
-  }
-  
   // MARK: View configuration
   private func configureViewHierarchy() {
     view.addSubview(effectView)

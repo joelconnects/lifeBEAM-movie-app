@@ -14,22 +14,31 @@ class MovieManager {
   
   // MARK: - Properties
   private var movieDataModelManager: MovieDataModelManager
+  private var nextPageLoadInProgress: Bool = false
+  private var currentPage: Int = 0
+  
   lazy var movies: [Movie] = []
   lazy var genres: [Int: String] = [:]
   lazy var images: [Int: UIImage] = [:]
 
+  private var savedPage: Int {
+    get {
+      return UserDefaults().integer(forKey: Constants.User.CurrentPage)
+    }
+    set {
+      UserDefaults().set(newValue, forKey: Constants.User.CurrentPage)
+    }
+  }
+  
   // MARK: - Initialization
   init(movieDataModelManager: MovieDataModelManager) {
     self.movieDataModelManager = movieDataModelManager
-    
+    savedPage = 0
     loadMovies()
-    // TODO: Remove when complete
-//    movieDataModelManager.deleteAll()
-//    print("stop")
   }
 
   // MARK: - Loading
-  func loadMovies(attempts: Int = 0) {
+  private func loadMovies(attempts: Int = 0) {
     if attempts == 3 {
       DispatchQueue.main.async {
         AlertPresenter.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.RetryFailedMessage, actionTitle: Constants.Alert.RetryFailedActionTitle, dismissalCallback: {
@@ -41,17 +50,19 @@ class MovieManager {
     
     loadTMDBSections { success in
       if success {
-        Log.d(tag: self.LOG_TAG, message: "load TMDB sections success")
         self.movieDataModelManager.deleteAll()
         self.saveMovies()
         self.saveGenres()
-        NotificationCenter.default.post(name: .moviesReadyToDisplay, object: nil)
+        DispatchQueue.main.async {
+          NotificationCenter.default.post(name: .moviesReadyToDisplay, object: nil)
+        }
         
       } else if !success && !self.movieDataModelManager.isEmpty {
-        Log.d(tag: self.LOG_TAG, message: "load TMDB sections !success and !isEmpty")
         self.movies = MovieEntity.convert(self.movieDataModelManager.fetchMovies())
         self.genres = GenreEntity.convert(self.movieDataModelManager.fetchGenres())
-        NotificationCenter.default.post(name: .moviesReadyToDisplay, object: nil)
+        DispatchQueue.main.async {
+          NotificationCenter.default.post(name: .moviesReadyToDisplay, object: nil)
+        }
         
       } else {
         Log.e(tag: self.LOG_TAG, message: "load TMDB sections failed")
@@ -65,14 +76,13 @@ class MovieManager {
   }
   
   private func loadTMDBSections(completion: @escaping (Bool) -> ()) {
-    let queue = DispatchQueue(label: "com.lifebeammovieapp.dispatchgroup", attributes: .concurrent, target: .main)
+    let queue = DispatchQueue(label: "com.lifebeammovieapp.dispatchgroup", attributes: .concurrent)
     let group = DispatchGroup()
     var errors: Int = 0
     
     group.enter()
     queue.async (group: group) {
       self.loadDiscoverSection(completion: { error in
-        Log.d(tag: self.LOG_TAG, message: "load discover section complete")
         if error != nil {
           Log.e(tag: self.LOG_TAG, message: "\(error!.localizedDescription)")
           errors += 1
@@ -84,7 +94,6 @@ class MovieManager {
     group.enter()
     queue.async (group: group) {
       self.loadGenresSection(completion: { error in
-        Log.d(tag: self.LOG_TAG, message: "load genre section complete")
         if error != nil {
           Log.e(tag: self.LOG_TAG, message: "\(error!.localizedDescription)")
           errors += 1
@@ -93,20 +102,21 @@ class MovieManager {
       })
     }
     
-    group.notify(queue: DispatchQueue.main) {
-      Log.d(tag: self.LOG_TAG, message: "group notification")
+    group.notify(queue: .main) {
       let errorsOccurred = (errors > 0) ? true : false
       completion(!errorsOccurred)
     }
   }
   
   private func loadDiscoverSection(completion: @escaping (Error?) -> ()) {
-    let router = TMDBRouter(section: .discover(page: 1))
+    let router = TMDBRouter(section: .discover(page: currentPage + 1))
     TMDBAPIClient.request(router, completion: { results in
       switch results {
       case .success(let result):
         if let discover = result.discover {
-          self.movies = discover.movies
+          self.currentPage = discover.page
+          self.savedPage = discover.page
+          self.movies.append(contentsOf: discover.movies)
           completion(nil)
         }
       case .failure(let error):
@@ -130,6 +140,26 @@ class MovieManager {
     })
   }
   
+  private func loadNextPage() {
+    nextPageLoadInProgress = true
+    
+    loadDiscoverSection { error in
+      if error == nil {
+        self.movieDataModelManager.deleteMovies()
+        self.saveMovies()
+        self.nextPageLoadInProgress = false
+        DispatchQueue.main.async {
+          NotificationCenter.default.post(name: .moviesReadyToDisplay, object: nil)
+        }
+      } else {
+        Log.e(tag: self.LOG_TAG, message: "load next page failed")
+        DispatchQueue.main.async {
+          AlertPresenter.presentDefaultAlert(title: Constants.Alert.DefaultTitle, message: Constants.Alert.DefaultMessage, actionTitle: Constants.Alert.NextPageActionTitle, dismissalCallback: nil)
+        }
+      }
+    }
+  }
+  
   // MARK: - Save
   private func saveMovies() {
     for movie in movies {
@@ -144,7 +174,14 @@ class MovieManager {
     }
   }
   
-  // MARK: - Display helpers
+  // MARK: - Helpers
+  func requestMovies() {
+    if !nextPageLoadInProgress {
+      currentPage = savedPage
+      loadNextPage()
+    }
+  }
+  
   func genresForDisplay(_ genreIds: [Int]?) -> String? {
     guard let identifiers = genreIds else {
       return nil

@@ -19,6 +19,8 @@ final class MoviesCollectionViewCell: UICollectionViewCell {
   private lazy var imageViewContainer = UIView()
   private lazy var labelContainer = UIView()
   
+  var imageIsPlaceholder: Bool = false
+  
   var titleText: String? {
     didSet {
       titleLabel.text = titleText?.uppercased()
@@ -134,6 +136,7 @@ final class MoviesCollectionViewCell: UICollectionViewCell {
   // MARK: - Resuse
   override func prepareForReuse() {
     super.prepareForReuse()
+    imageIsPlaceholder = false
     gradientImageView.alpha = 0
     mainImageView.image = nil
     
@@ -146,6 +149,7 @@ final class MoviesCollectionViewCell: UICollectionViewCell {
   
   // MARK: - Helpers
   func setImage(_ image: UIImage, animated: Bool, isPlaceholder: Bool) {
+    imageIsPlaceholder = isPlaceholder
     if animated {
       animatePosterContainerViews(with: image)
     } else {

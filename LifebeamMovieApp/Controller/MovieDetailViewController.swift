@@ -28,6 +28,9 @@ class MovieDetailViewController: UIViewController {
   private var detailLabel: UILabel!
   private var detailScrollView: UIScrollView!
   
+  private var scrollViewTopConstraint: NSLayoutConstraint!
+  private var scrollViewBtmConstraint: NSLayoutConstraint!
+  
   // MARK: - Initialization
   init(movie: Movie, movieManager: MovieManager, startingFrame: CGRect) {
     self.movieManager = movieManager
@@ -102,10 +105,12 @@ class MovieDetailViewController: UIViewController {
     headerView.heightAnchor.constraint(equalTo: contentView.widthAnchor).isActive = true
 
     detailScrollView.translatesAutoresizingMaskIntoConstraints = false
-    detailScrollView.topAnchor.constraint(equalTo: headerView.bottomAnchor).isActive = true
-    detailScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-    detailScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-    detailScrollView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+    scrollViewTopConstraint = detailScrollView.topAnchor.constraint(equalTo: headerView.bottomAnchor)
+    detailScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+    detailScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
+    scrollViewBtmConstraint = detailScrollView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+    scrollViewTopConstraint.isActive = true
+    scrollViewBtmConstraint.isActive = true
 
     headerImageView.translatesAutoresizingMaskIntoConstraints = false
     headerImageView.topAnchor.constraint(equalTo: headerView.topAnchor).isActive = true
@@ -125,10 +130,15 @@ class MovieDetailViewController: UIViewController {
     titleLabel.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -15).isActive = true
 
     detailLabel.translatesAutoresizingMaskIntoConstraints = false
-    detailLabel.topAnchor.constraint(equalTo: detailScrollView.topAnchor, constant: 15).isActive = true
-    detailLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
-    detailLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
-    detailLabel.bottomAnchor.constraint(equalTo: detailScrollView.bottomAnchor, constant: -15).isActive = true
+    detailLabel.topAnchor.constraint(equalTo: detailScrollView.topAnchor).isActive = true
+    detailLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+    detailLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
+    detailLabel.bottomAnchor.constraint(equalTo: detailScrollView.bottomAnchor).isActive = true
+  }
+
+  private func configureBlurEffectView() {
+    blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+    blurEffectView.alpha = 0
   }
   
   private func configureContentView() {
@@ -136,20 +146,17 @@ class MovieDetailViewController: UIViewController {
     contentView.alpha = 0
     contentView.layer.cornerRadius = 20
     contentView.clipsToBounds = true
+    contentView.backgroundColor = .black
   }
-  
-  private func configureBlurEffectView() {
-    blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-    blurEffectView.alpha = 0
-  }
-  
+
   private func configureHeaderView() {
     headerView.backgroundColor = .white
   }
   
   private func configureDetailScrollView() {
     detailScrollView = UIScrollView()
-    detailScrollView.backgroundColor = .black
+    detailScrollView.showsVerticalScrollIndicator = true
+    detailScrollView.indicatorStyle = .white
   }
   
   private func configureCloseButton() {
@@ -199,7 +206,7 @@ class MovieDetailViewController: UIViewController {
     movieManager.imageForDisplay(movie: movie) { (image, error) in
       if let image = image  {
         DispatchQueue.main.async {
-          self.transitionHeaderImageView(with: image.cropPoster())
+          self.transitionHeaderImageView(with: image)
         }
       } else {
         Log.e(tag: self.LOG_TAG, message: "\(error?.localizedDescription ?? "error retreiving image for display")")
@@ -214,6 +221,9 @@ class MovieDetailViewController: UIViewController {
     contentView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 30).isActive = true
     contentView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30).isActive = true
     contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30).isActive = true
+    
+    scrollViewTopConstraint.constant = 20
+    scrollViewBtmConstraint.constant = -20
     
     UIView.animate(withDuration: 0.3) {
       self.view.layoutIfNeeded()

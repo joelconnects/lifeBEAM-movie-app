@@ -111,6 +111,17 @@ final class MovieDataModelManager: NSObject {
     }
   }
   
+  func deleteMovies() {
+    let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MovieEntity")
+    let movieDeleteRequest = NSBatchDeleteRequest(fetchRequest: movieFetchRequest)
+    
+    do {
+      try psc.execute(movieDeleteRequest, with: moc)
+    } catch let error as NSError {
+      fatalError("Failed to delete movie records: \(error)")
+    }
+  }
+  
   func deleteAll() {
     let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MovieEntity")
     let genreFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GenreEntity")

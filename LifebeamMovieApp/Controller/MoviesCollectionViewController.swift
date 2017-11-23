@@ -18,6 +18,11 @@ final class MoviesCollectionViewController: UICollectionViewController {
   private let cellReuseID = "movieCell"
   private let flowLayout = UICollectionViewFlowLayout()
   private let movieManager: MovieManager
+  private let approachingEndThreshold = 20
+  private var lastOffset: CGPoint?
+  private var lastOffsetCapture: TimeInterval?
+  private var isScrollingFast: Bool = false
+  private var scrollingIrrelevant: Bool = true
   
   // MARK: - Initialization
   
@@ -30,12 +35,18 @@ final class MoviesCollectionViewController: UICollectionViewController {
     fatalError("init?(coder:) is not supported")
   }
   
+  deinit {
+    NotificationCenter.default.removeObserver(self, name: .moviesReadyToDisplay, object: nil)
+  }
+  
   // MARK: - View lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureNavigationBar()
     configureCollectionView()
     configureCollectionViewLayout()
+    
+    NotificationCenter.default.addObserver(self, selector: #selector(movieManagerNotification(_:)), name: .moviesReadyToDisplay, object: nil)
   }
   
   // MARK: - View configuration
@@ -60,6 +71,13 @@ final class MoviesCollectionViewController: UICollectionViewController {
     
     flowLayout.itemSize = CGSize(width: itemWidth, height: itemHeight)
   }
+  
+  // MARK: - Notification
+  @objc private func movieManagerNotification(_ notification: Notification) {
+    if notification.name == .moviesReadyToDisplay {
+      self.collectionView?.reloadData()
+    }
+  }
 }
 
 // MARK: UICollectionViewDataSource
@@ -70,6 +88,18 @@ extension MoviesCollectionViewController {
   
   override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseID, for: indexPath) as! MoviesCollectionViewCell
+    
+    let movie = movieManager.movies[indexPath.row]
+    
+    cell.titleText = movie.title
+    cell.detailText = movieManager.genresForDisplay(movie.genreIds)
+    
+    if let poster = movieManager.images[movie.id] {
+      cell.setImage(poster, animated: false, isPlaceholder: false)
+    } else {
+      cell.setImage(Theme.Images.PosterPlaceholder, animated: false, isPlaceholder: true)
+    }
+    
     return cell
   }
 }
@@ -77,23 +107,15 @@ extension MoviesCollectionViewController {
 // MARK: UICollectionViewDelegate
 extension MoviesCollectionViewController {
   override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-    // MARK: - Cell
+  
     let movieCell = cell as! MoviesCollectionViewCell
     let movie = movieManager.movies[indexPath.row]
-    
-    // MARK: - Labels
-    movieCell.titleText = movie.title
-    movieCell.detailText = movieManager.genresForDisplay(movie.genreIds)
-    
-    // MARK: - Image
-    if let poster = movieManager.images[movie.id] {
-      movieCell.setImage(poster, animated: false, isPlaceholder: false)
-    } else {
-      movieCell.setImage(Theme.Images.PosterPlaceholder, animated: false, isPlaceholder: true)
+
+    if movieManager.images[movie.id] == nil {
       movieManager.imageForDisplay(movie: movie) { (image, error) in
         if let image = image  {
           DispatchQueue.main.async {
-            if collectionView.visibleCells.contains(cell) {
+            if collectionView.visibleCells.contains(movieCell) && !self.isScrollingFast {
               movieCell.setImage(image, animated: true, isPlaceholder: false)
             }
           }
@@ -109,16 +131,67 @@ extension MoviesCollectionViewController {
       return
     }
     
-//    let renderer = UIGraphicsImageRenderer(size: cell.bounds.size)
-//    let image = renderer.image { ctx in
-//      cell.drawHierarchy(in: cell.bounds, afterScreenUpdates: true)
-//    }
-    
-//    let imageView = UIImageView(image: image)
     let frame = collectionView.convert(cell.frame, to: collectionView.superview)
-    
     let detailViewController = MovieDetailViewController(movie: movieManager.movies[indexPath.row], movieManager: movieManager, startingFrame: frame)
     detailViewController.modalPresentationStyle = .overCurrentContext
     present(detailViewController, animated: false, completion: nil)
+  }
+}
+
+// MARK: - UIScrollViewDelegate
+extension MoviesCollectionViewController {
+  
+  override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    for cell in collectionView!.visibleCells {
+      let movieCell = cell as! MoviesCollectionViewCell
+      let row = collectionView!.indexPath(for: movieCell)!.row
+      let movie = movieManager.movies[row]
+      
+      if let image = movieManager.images[movie.id] {
+        if movieCell.imageIsPlaceholder {
+          movieCell.setImage(image, animated: true, isPlaceholder: false)
+        }
+      }
+    }
+  }
+  
+  override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    // MARK: - Request movies
+    if let indexPath = collectionView?.indexPathsForVisibleItems.sorted().last {
+      let thresholdReached = (movieManager.movies.count - indexPath.row) < approachingEndThreshold
+      let isScrollingDown = scrollView.panGestureRecognizer.velocity(in: scrollView).y < 0
+      
+      if thresholdReached && isScrollingDown {
+        movieManager.requestMovies()
+      }
+    }
+
+    // MARK: - Check scrolling speed
+    if lastOffsetCapture == nil {
+      lastOffsetCapture = Date().timeIntervalSinceReferenceDate
+    }
+    
+    if lastOffset == nil {
+      lastOffset = scrollView.contentOffset
+    }
+    
+    let currentOffset: CGPoint = scrollView.contentOffset
+    let currentTime = Date().timeIntervalSinceReferenceDate
+    let timeDiff = currentTime - lastOffsetCapture!
+    
+    if timeDiff > 0.1 {
+      let distance: CGFloat = currentOffset.y - lastOffset!.y
+      let scrollSpeedNotAbs: CGFloat = (distance * 10) / 1000
+      
+      let scrollSpeed: CGFloat = abs(scrollSpeedNotAbs)
+      if (scrollSpeed > 0.6) {
+        isScrollingFast = true;
+      } else {
+        isScrollingFast = false;
+      }
+      
+      lastOffset = currentOffset
+      lastOffsetCapture = currentTime
+    }
   }
 }
